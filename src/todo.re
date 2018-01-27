@@ -12,7 +12,7 @@ let component = ReasonReact.reducerComponent("Todo");
 
 let todoTitleStyle = ReactDOMRe.Style.make(~textAlign="center", ());
 
-let make = _children => {
+let make = (~todoItems, ~onClick, _children) => {
   ...component,
   initialState: () => {editText: ""},
   reducer: action =>
@@ -44,6 +44,9 @@ let make = _children => {
             )
         )
       />
-      <button> (ReasonReact.stringToElement("ADD TODO")) </button>
+      <button onClick=((_) => onClick(props.state.editText))>
+        (ReasonReact.stringToElement("ADD TODO"))
+      </button>
+      <div> (ReasonReact.arrayToElement(Array.of_list(todoItems))) </div>
     </div>
 };
