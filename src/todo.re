@@ -1,5 +1,6 @@
 type action =
-  | Change(string);
+  | Change(string)
+  | Clear;
 
 type todo = {
   title: string,
@@ -18,6 +19,7 @@ let make = (~todoItems, ~onClick, _children) => {
   reducer: action =>
     switch action {
     | Change(text) => ((_) => ReasonReact.Update({editText: text}))
+    | Clear => ((_) => ReasonReact.Update({editText: ""}))
     },
   render: props =>
     <div
@@ -25,7 +27,6 @@ let make = (~todoItems, ~onClick, _children) => {
         ReactDOMRe.Style.make(
           ~padding="10px",
           ~width="600px",
-          ~height="600px",
           ~margin="0 auto",
           ~border="1px solid #ccc",
           ()
@@ -34,7 +35,25 @@ let make = (~todoItems, ~onClick, _children) => {
       <h1 style=todoTitleStyle> (ReasonReact.stringToElement("TodoList")) </h1>
       <input
         _type="text"
+        placeholder="write somthing..."
+        style=(
+          ReactDOMRe.Style.make(
+            ~width="100%",
+            ~height="30px",
+            ~border="1px solid #ccc",
+            ~borderRadius="5px",
+            ()
+          )
+        )
+        autoFocus=Js.true_
         value=props.state.editText
+        onKeyDown=(
+          event =>
+            if (ReactEventRe.Keyboard.keyCode(event) === 13) {
+              onClick(props.state.editText);
+              props.send(Clear);
+            }
+        )
         onChange=(
           event =>
             props.send(
@@ -44,9 +63,9 @@ let make = (~todoItems, ~onClick, _children) => {
             )
         )
       />
-      <button onClick=((_) => onClick(props.state.editText))>
-        (ReasonReact.stringToElement("ADD TODO"))
-      </button>
-      <div> (ReasonReact.arrayToElement(Array.of_list(todoItems))) </div>
+      <div
+        style=(ReactDOMRe.Style.make(~overflow="auto", ~height="600px", ()))>
+        (ReasonReact.arrayToElement(Array.of_list(todoItems)))
+      </div>
     </div>
 };
