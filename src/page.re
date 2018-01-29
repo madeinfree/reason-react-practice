@@ -12,6 +12,10 @@ let make = (~message, _children) => {
     let todos = [];
     {todos: todos};
   },
+  didMount: (_) => {
+    Js.log("Hello All");
+    ReasonReact.Update({todos: [{title: "First task", completed: false}]});
+  },
   reducer: (action, state) =>
     switch action {
     | ADD_TODO(text) =>
@@ -35,6 +39,7 @@ let make = (~message, _children) => {
                ReactDOMRe.Style.make(
                  ~display="flex",
                  ~justifyContent="space-between",
+                 ~alignItems="center",
                  ()
                )
              )>
